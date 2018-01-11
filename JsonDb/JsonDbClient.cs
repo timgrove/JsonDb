@@ -67,12 +67,13 @@ namespace JsonDb
             var db = JsonConvert.DeserializeObject<List<T>>(json, JsonSerializerSettings);
 
             // cast it to IEntity so we can get by id
-            var data = db.Cast<IJsonDbEntity>().ToList();
+            var data = db.Cast<IJsonDbEntity>().ToDictionary(x => x.Id, x => x);
 
-            // get the object by id
-            var obj = data.Where(x => x.Id == id).FirstOrDefault();
+			// get the object by id
+			IJsonDbEntity row = null;
+			var obj = data.TryGetValue(id, out row);
 
-            return (T)obj;
+            return (T)row;
         }
 
 
